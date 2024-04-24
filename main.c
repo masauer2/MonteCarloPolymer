@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -14,7 +15,7 @@
 
 typedef struct {
     double crd[3];
-    char* type;
+    int type;
 } Bead;
 
 typedef struct {
@@ -35,9 +36,9 @@ typedef struct {
 } Atom;
 
 int main() {
-
     FILE *file;
-    char line[NUM_BEADS*NUM_CHAINS+2];
+    //char line[NUM_BEADS*NUM_CHAINS+2];
+    char line[100];
     Atom atoms[NUM_BEADS*NUM_CHAINS];
     int num_atoms = 0;
     int max_atoms = NUM_BEADS*NUM_CHAINS;
@@ -49,19 +50,14 @@ int main() {
         printf("Could not open file\n");
         return 1;
     }
-
+ 
     // Read atoms from the file
-    while (fgets(line, sizeof(line), file) != NULL) {
+    //sizeof(line)
+    // != NULL
+    while (fgets(line, sizeof(line), file)) {
         // Parse line into atom symbol and coordinates
-        if (sscanf(line, "%2s %lf %lf %lf", atoms[num_atoms].symbol, 
-                   &atoms[num_atoms].x, &atoms[num_atoms].y, &atoms[num_atoms].z) == 4) {
+        if (sscanf(line, "%2s %lf %lf %lf", &atoms[num_atoms].symbol, &atoms[num_atoms].x, &atoms[num_atoms].y, &atoms[num_atoms].z) == 4) {
             num_atoms++;
-
-            //printf("%d %d\n", max_atoms, num_atoms);
-            /*if (num_atoms >= max_atoms) {
-                printf("Maximum number of atoms exceeded\n");
-                break;
-            }*/
         }
     }
 
@@ -77,8 +73,18 @@ int main() {
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[0] = atoms[i].x;
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1] = atoms[i].y;
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2] = atoms[i].z;
-        s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = atoms[i].symbol;
-        printf("%s %.6lf %.6lf %.6lf\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type, s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[0], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2]);
+        if(strcmp(atoms[i].symbol,"A") == 0){
+            s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = 0;
+        }
+        else if(strcmp(atoms[i].symbol,"B") == 0){
+            s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = 1;
+        }
+        else{
+            s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = -1;
+            printf("Error reading atom type. Should be A or B.");
+        }
+       
+        printf("%d %.6lf %.6lf %.6lf\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type, s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[0], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2]);
         //printf("%s\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type);
     }
     

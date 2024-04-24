@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define NUM_BEADS 125      // Total number of beads per chain
-#define NUM_CHAINS 10       // Number of chains
+#define NUM_CHAINS 10      // Number of chains
 #define BOND_LENGTH 1    // Length of each bond
 #define SUBCHAIN_LENGTH 10 // Length of each subchain of type 'b'
 
