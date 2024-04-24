@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define NUM_BEADS 25
-#define NUM_CHAINS 3
+#define NUM_BEADS 125
+#define NUM_CHAINS 10
 #define BOND_LENGTH 1.0
 #define BOND_STIFFNESS 10.0
 #define LJ_SIGMA 1.0
@@ -42,6 +42,7 @@ int main() {
     int num_atoms = 0;
     int max_atoms = NUM_BEADS*NUM_CHAINS;
     int tmp;
+
     // Open the .xyz file for reading
     file = fopen("example.xyz", "r");
     if (file == NULL) {
@@ -77,7 +78,7 @@ int main() {
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1] = atoms[i].y;
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2] = atoms[i].z;
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = atoms[i].symbol;
-        //printf("%s %.6lf %.6lf %.6lf\n", atoms[i].symbol, atoms[i].x, atoms[i].y, atoms[i].z);
+        printf("%s %.6lf %.6lf %.6lf\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type, s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[0], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1], s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2]);
         //printf("%s\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type);
     }
     
