@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "string.h": "c"
+        "string.h": "c",
+        "__locale": "c",
+        "string": "c",
+        "string_view": "c"
     }
 }
