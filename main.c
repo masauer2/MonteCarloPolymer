@@ -14,7 +14,7 @@
 
 typedef struct {
     double crd[3];
-    int type;
+    char* type;
 } Bead;
 
 typedef struct {
@@ -55,10 +55,12 @@ int main() {
         if (sscanf(line, "%2s %lf %lf %lf", atoms[num_atoms].symbol, 
                    &atoms[num_atoms].x, &atoms[num_atoms].y, &atoms[num_atoms].z) == 4) {
             num_atoms++;
-            if (num_atoms >= max_atoms) {
+
+            //printf("%d %d\n", max_atoms, num_atoms);
+            /*if (num_atoms >= max_atoms) {
                 printf("Maximum number of atoms exceeded\n");
                 break;
-            }
+            }*/
         }
     }
 
@@ -76,6 +78,7 @@ int main() {
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2] = atoms[i].z;
         s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = atoms[i].symbol;
         //printf("%s %.6lf %.6lf %.6lf\n", atoms[i].symbol, atoms[i].x, atoms[i].y, atoms[i].z);
+        //printf("%s\n", s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type);
     }
     
     return 0;
