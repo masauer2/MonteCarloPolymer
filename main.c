@@ -22,7 +22,7 @@ typedef struct {
 } Chain;
 
 typedef struct {
-    Chain c[NUM_BEADS];
+    Chain c[NUM_CHAINS];
     double temp;
     double eMat[NUM_BEADS*NUM_CHAINS][NUM_BEADS*NUM_CHAINS];
     double eVec[NUM_BEADS*NUM_CHAINS];
@@ -67,14 +67,14 @@ int main() {
 
     // Print the atoms
 
-    System s;:qs
+    System s;
     printf("Atomic coordinates:\n");
     for (int i = 0; i < num_atoms; i++) {
-        int curr_chain = floor(i/NUM_BEADS)
-        s.c[curr_chain].b[i].crd[0] = atoms[i].x;
-        s.c[curr_chain].b[i].crd[1] = atoms[i].y;
-        s.c[curr_chain].b[i].crd[2] = atoms[i].z;
-        s.c[curr_chain].b[i].type = atoms[i].symbol;
+        int curr_chain = floor(i/NUM_BEADS);
+        s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[0] = atoms[i].x;
+        s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[1] = atoms[i].y;
+        s.c[curr_chain].b[i-NUM_BEADS*curr_chain].crd[2] = atoms[i].z;
+        s.c[curr_chain].b[i-NUM_BEADS*curr_chain].type = atoms[i].symbol;
         //printf("%s %.6lf %.6lf %.6lf\n", atoms[i].symbol, atoms[i].x, atoms[i].y, atoms[i].z);
     }
     
