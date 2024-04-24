@@ -3,7 +3,7 @@
 #include <math.h>
 
 #define NUM_BEADS 25
-#define NUM_CHAINS 1
+#define NUM_CHAINS 3
 #define BOND_LENGTH 1.0
 
 
@@ -29,9 +29,10 @@ int main(){
     char *filename = "example.xyz";
 
     file = fopen(filename, "w");
-    fprintf(file, "%d\n", NUM_BEADS*NUM_CHAINS);
-    fprintf(file, "%s\n", "POLYMER");
+    
 	for(int i=0; i<NUM_CHAINS; i++){
+        fprintf(file, "%d\n", NUM_BEADS);
+        fprintf(file, "%s %d\n", "CHAIN", i);
 		gen_chain(init_crd, file);
 	}
     fclose(file);
