@@ -67,7 +67,7 @@ int main() {
 
     // Print the atoms
 
-    System s;
+    System s;:qs
     printf("Atomic coordinates:\n");
     for (int i = 0; i < num_atoms; i++) {
         int curr_chain = floor(i/NUM_BEADS)
