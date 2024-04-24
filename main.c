@@ -11,12 +11,12 @@
 #define MC_STEPS 10000
 #define MAX_DISPLACEMENT 0.1
 #define WRITE_FREQUENCY 100
+#define MC_STEP_SIZE 1
 
 typedef struct {
     char atom_type;
     double x, y, z;
 } Atom;
-
 
 typedef struct {
     int length;
@@ -42,8 +42,8 @@ void bonded_interaction(System *s, int i,  int j, int chainLength){
     int atomIndex2 = j % chainLength;
 
     double bondLength = sqrt(pow(s->chains[chainNum1].atoms[atomIndex1].x - s->chains[chainNum2].atoms[atomIndex2].x, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex1].y, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex1].z, 2));
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex2].y, 2) +
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex2].z, 2));
     double bondEnergy = 0.5 * BOND_STIFFNESS * pow(bondLength - BOND_LENGTH,2);
     s->eMat[i][j] += bondEnergy;
     
@@ -58,8 +58,8 @@ void angle_interaction(System *s,  int i,  int j, int chainLength){
 
     double repulsionEnergy;
     double bondLengthSq = pow(s->chains[chainNum1].atoms[atomIndex1].x - s->chains[chainNum2].atoms[atomIndex2].x, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex1].y, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex1].z, 2);
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex2].y, 2) +
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex2].z, 2);
     if (bondLengthSq < TWO_TO_THE_POWER_OF_ONE_SIXTH * LJ_EPSILON) {
         repulsionEnergy = 4.0 * LJ_EPSILON * (pow(LJ_SIGMA,12)/pow(bondLengthSq,6) - pow(LJ_SIGMA,6)/pow(bondLengthSq, 3)) + LJ_EPSILON;
     }
@@ -67,6 +67,7 @@ void angle_interaction(System *s,  int i,  int j, int chainLength){
         repulsionEnergy = 0.0;
     }
     s->eMat[i][j] += repulsionEnergy;
+    
     
 }
 
@@ -77,11 +78,11 @@ void nonbonded_interaction(System *s, int i,  int j, int chainLength){
 
     int chainNum2 = get_chain_num(j, chainLength);
     int atomIndex2 = j % chainLength;
-
+    
     double nonBondedEnergy;
     double bondLengthSq = pow(s->chains[chainNum1].atoms[atomIndex1].x - s->chains[chainNum2].atoms[atomIndex2].x, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex1].y, 2) +
-                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex1].z, 2);
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].y - s->chains[chainNum1].atoms[atomIndex2].y, 2) +
+                                 pow(s->chains[chainNum1].atoms[atomIndex1].z - s->chains[chainNum1].atoms[atomIndex2].z, 2);
 
     if (bondLengthSq < 16 * LJ_SIGMA * LJ_SIGMA) {
         nonBondedEnergy = 4.0 * LJ_EPSILON * (pow(LJ_SIGMA,12)/pow(bondLengthSq,6) - pow(LJ_SIGMA,6)/pow(bondLengthSq, 3));
@@ -90,6 +91,7 @@ void nonbonded_interaction(System *s, int i,  int j, int chainLength){
         nonBondedEnergy = 0.0;
     }
     s->eMat[i][j] += nonBondedEnergy;
+   
    
 
 }
@@ -101,14 +103,14 @@ void initialize_energy_matrix(System *s, int nChains, int chainLength){
             if((j - i == 1) && (get_chain_num(i, chainLength) == get_chain_num(j, chainLength))){bonded_interaction(s, i,  j, chainLength);}
             if((j - i == 2) && (get_chain_num(i, chainLength) == get_chain_num(j, chainLength))){angle_interaction(s, i,  j, chainLength);}
             if((j - i > 2)){nonbonded_interaction(s, i,  j, chainLength);}
+            s->eMat[j][i] = s->eMat[i][j]; 
             }
         }
 
-        printf("%f\n",s->eMat[0][1]);
 }
 
 void print_energy_matrix(System *s){
-    for (int i = 0; i < 1 ; i++) {
+    for (int i = 0; i < 30 ; i++) {
         for (int j = 0; j < 30 ; j++) {
             printf("%f ", s->eMat[i][j]);
         }
@@ -162,6 +164,7 @@ int main() {
     
     initialize_energy_matrix(&sys, num_chains, chain_length);
     print_energy_matrix(&sys);  
+
     // Free memory
     for (int i = 0; i < num_chains; i++) {
         free(sys.chains[i].atoms);
