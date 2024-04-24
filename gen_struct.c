@@ -29,10 +29,9 @@ int main(){
     char *filename = "example.xyz";
 
     file = fopen(filename, "w");
-    
-	for(int i=0; i<NUM_CHAINS; i++){
-        fprintf(file, "%d\n", NUM_BEADS);
-        fprintf(file, "%s %d\n", "CHAIN", i);
+    fprintf(file, "%d\n", NUM_BEADS*NUM_CHAINS);
+    fprintf(file, "%s %d\n", "POLYMER WITH CHAINS", NUM_CHAINS);
+	for(int i=0; i<=NUM_CHAINS; i++){    
 		gen_chain(init_crd, file);
 	}
     fclose(file);
